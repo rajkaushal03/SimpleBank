@@ -12,7 +12,8 @@ import (
 
 const (
 	dbDriver = "postgres"
-	dbSource = "postgresql://root:secret@localhost:5432/simplebank?sslmode=disable"
+	// ✅ IMPORTANT: Use test database, NOT production!
+	dbSource = "postgresql://root:secret@localhost:5432/simplebank_test?sslmode=disable"
 )
 
 var testQueries *Queries
@@ -31,16 +32,16 @@ func TestMain(m *testing.M) {
 		log.Fatal("cannot ping db:", err)
 	}
 
-	log.Println("Database connection successful!")
+	log.Println("✅ Test database connection successful!")
 
 	testQueries = New(testDB)
 
-	// Clean up before running tests
+	// Clean test database before tests
 	cleanupDatabase()
 
 	code := m.Run()
 
-	// Clean up after running tests
+	// Clean test database after tests
 	cleanupDatabase()
 
 	testDB.Close()
@@ -50,16 +51,18 @@ func TestMain(m *testing.M) {
 func cleanupDatabase() {
 	ctx := context.Background()
 
-	// Disable foreign key checks temporarily
-	testDB.ExecContext(ctx, "SET session_replication_role = 'replica';")
+	queries := []string{
+		"TRUNCATE TABLE transfers RESTART IDENTITY CASCADE;",
+		"TRUNCATE TABLE entries RESTART IDENTITY CASCADE;",
+		"TRUNCATE TABLE accounts RESTART IDENTITY CASCADE;",
+	}
 
-	// Truncate all tables
-	testDB.ExecContext(ctx, "TRUNCATE TABLE transfers CASCADE;")
-	testDB.ExecContext(ctx, "TRUNCATE TABLE entries CASCADE;")
-	testDB.ExecContext(ctx, "TRUNCATE TABLE accounts CASCADE;")
+	for _, query := range queries {
+		_, err := testDB.ExecContext(ctx, query)
+		if err != nil {
+			log.Printf("Warning: cleanup query failed: %v", err)
+		}
+	}
 
-	// Re-enable foreign key checks
-	testDB.ExecContext(ctx, "SET session_replication_role = 'origin';")
-
-	log.Println("Database cleaned up!")
+	log.Println("✅ Test database cleaned!")
 }
