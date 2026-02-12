@@ -1,10 +1,10 @@
 # Detect OS and set appropriate commands
 ifeq ($(OS),Windows_NT)
-    DOCKER_SUDO :=
-    DOCKER_IT := -i
+	DOCKER_SUDO :=
+	DOCKER_IT := -i
 else
-    DOCKER_SUDO := sudo
-    DOCKER_IT := -it
+	DOCKER_SUDO := sudo
+	DOCKER_IT := -it
 endif
 
 # Use local migrate binary on both platforms
@@ -63,4 +63,22 @@ test:
 cleandb:
 	$(DOCKER_SUDO) docker exec $(DOCKER_IT) postgres12 psql -U root -d simplebank -c "TRUNCATE TABLE transfers, entries, accounts RESTART IDENTITY CASCADE;"
 
-.PHONY: postgres createdb dropdb checkdb migrateup migratedown sqlc test cleandb createtestdb droptestdb migrateuptestdb migratedowntestdb checktestdb testscript listdb
+# Script-based commands (NEW)
+install:
+	./scripts/install.sh
+
+cleanup:
+	./scripts/cleanup.sh
+
+reset:
+	./scripts/reset.sh
+
+status:
+	./scripts/status.sh
+
+softclean:
+	./scripts/softclean.sh
+
+.PHONY: postgres createdb dropdb checkdb migrateup migratedown sqlc test cleandb \
+		createtestdb droptestdb migrateuptestdb migratedowntestdb checktestdb testscript \
+		listdb install cleanup reset status softclean
