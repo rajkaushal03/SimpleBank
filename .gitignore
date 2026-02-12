@@ -1,1 +1,4 @@
 SimpleBank.sql
+go.mod
+go.sum
+Makefile.windows
