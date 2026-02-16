@@ -17,7 +17,7 @@ jobs:
         env:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: secret
-          POSTGRES_DB: simplebank  # ✅ Creates first database
+          POSTGRES_DB: simplebank
         ports:
           - 5432:5432
         options: >-
@@ -41,7 +41,7 @@ jobs:
         which migrate
 
     - name: Create test database
-      run: make createtestdb  # ✅ Uses your Makefile!
+      run: docker exec postgres createdb --username=root --owner=root simplebank_test
 
     - name: Run migrations
       run: |
