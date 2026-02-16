@@ -1,0 +1,13 @@
+SimpleBank
+
+Database transaction:=
+
+ISOLATION LEVEL		Dirty Read 	Non-repeatable Read	Phantoms
+
+read uncommitted	Yes		Yes			Yes
+
+read committed		No		Yes			Yes
+
+repeatable read 	No		No			Yes
+
+searizable		No		No			No
