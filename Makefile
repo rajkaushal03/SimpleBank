@@ -63,6 +63,9 @@ test:
 cleandb:
 	$(DOCKER_SUDO) docker exec $(DOCKER_IT) postgres12 psql -U root -d simplebank -c "TRUNCATE TABLE transfers, entries, accounts RESTART IDENTITY CASCADE;"
 
+server:
+	go run main.go
+
 # Script-based commands (NEW)
 install:
 	./scripts/install.sh
@@ -81,4 +84,4 @@ softclean:
 
 .PHONY: postgres createdb dropdb checkdb migrateup migratedown sqlc test cleandb \
 		createtestdb droptestdb migrateuptestdb migratedowntestdb checktestdb testscript \
-		listdb install cleanup reset status softclean
+		listdb install cleanup reset status softclean server

@@ -13,7 +13,7 @@ import (
 const (
 	dbDriver = "postgres"
 	// ✅ IMPORTANT: Use test database, NOT production!
-	dbSource = "postgresql://root:secret@localhost:5432/simplebank_test?sslmode=disable"
+	dbSource = "postgresql://root:secret@localhost:5432/simplebank?sslmode=disable"
 )
 
 var testQueries *Queries
@@ -42,7 +42,7 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 
 	// Clean test database after tests
-	cleanupDatabase()
+	// cleanupDatabase()
 
 	testDB.Close()
 	os.Exit(code)
