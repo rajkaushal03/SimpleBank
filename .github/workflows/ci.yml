@@ -19,7 +19,7 @@ jobs:
           POSTGRES_PASSWORD: secret
           POSTGRES_DB: simplebank
         ports:
-          - 5432:5432
+          - 5432:5432 
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -41,7 +41,8 @@ jobs:
         which migrate
 
     - name: Create test database
-      run: docker exec postgres createdb --username=root --owner=root simplebank_test
+      run: |
+        PGPASSWORD=secret psql -h localhost -U root -d simplebank -c "CREATE DATABASE simplebank_test;"
 
     - name: Run migrations
       run: |
