@@ -10,27 +10,7 @@ endif
 # Use local migrate binary on both platforms
 MIGRATE_UP := migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simplebank?sslmode=disable" -verbose up
 MIGRATE_DOWN := migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simplebank?sslmode=disable" -verbose down
-MIGRATE_UP_TEST := migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simplebank_test?sslmode=disable" -verbose up
-MIGRATE_DOWN_TEST := migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simplebank_test?sslmode=disable" -verbose down
 
-# test Database
-createtestdb:
-	$(DOCKER_SUDO) docker exec $(DOCKER_IT) postgres12 createdb --username=root --owner=root simplebank_test
-
-droptestdb:
-	$(DOCKER_SUDO) docker exec $(DOCKER_IT) postgres12 dropdb simplebank_test
-
-migrateuptestdb:
-	$(MIGRATE_UP_TEST)
-
-migratedowntestdb:
-	$(MIGRATE_DOWN_TEST)
-
-checktestdb:
-	$(DOCKER_SUDO) docker exec $(DOCKER_IT) postgres12 psql -U root -d simplebank_test
-
-testscript:
-	./scripts/test.sh
 
 # production Database
 postgres:
@@ -83,5 +63,4 @@ softclean:
 	./scripts/softclean.sh
 
 .PHONY: postgres createdb dropdb checkdb migrateup migratedown sqlc test cleandb \
-		createtestdb droptestdb migrateuptestdb migratedowntestdb checktestdb testscript \
 		listdb install cleanup reset status softclean server

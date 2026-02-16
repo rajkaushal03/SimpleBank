@@ -1,7 +1,6 @@
 package db
 
 import (
-	"context"
 	"database/sql"
 	"log"
 	"os"
@@ -12,7 +11,6 @@ import (
 
 const (
 	dbDriver = "postgres"
-	// ✅ IMPORTANT: Use test database, NOT production!
 	dbSource = "postgresql://root:secret@localhost:5432/simplebank?sslmode=disable"
 )
 
@@ -37,32 +35,12 @@ func TestMain(m *testing.M) {
 	testQueries = New(testDB)
 
 	// Clean test database before tests
-	cleanupDatabase()
+	// cleanupDatabase()
 
 	code := m.Run()
 
 	// Clean test database after tests
-	// cleanupDatabase()
 
 	testDB.Close()
 	os.Exit(code)
-}
-
-func cleanupDatabase() {
-	ctx := context.Background()
-
-	queries := []string{
-		"TRUNCATE TABLE transfers RESTART IDENTITY CASCADE;",
-		"TRUNCATE TABLE entries RESTART IDENTITY CASCADE;",
-		"TRUNCATE TABLE accounts RESTART IDENTITY CASCADE;",
-	}
-
-	for _, query := range queries {
-		_, err := testDB.ExecContext(ctx, query)
-		if err != nil {
-			log.Printf("Warning: cleanup query failed: %v", err)
-		}
-	}
-
-	log.Println("✅ Test database cleaned!")
 }

@@ -78,32 +78,9 @@ echo -e "${YELLOW}⬆️  Step 3: Running production migrations...${NC}"
 migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simplebank?sslmode=disable" -verbose up
 echo -e "${GREEN}✅ Production migrations completed${NC}"
 
-# Step 4: Create test database
-echo -e "${YELLOW}🧪 Step 4: Creating test database...${NC}"
-if [ "$IN_CI" = true ]; then
-    # In CI, use psql via network
-    if PGPASSWORD=secret psql -h localhost -U root -lqt | cut -d \| -f 1 | grep -qw simplebank_test; then
-        echo -e "${YELLOW}⚠️  Test database already exists${NC}"
-    else
-        PGPASSWORD=secret createdb -h localhost -U root simplebank_test
-        echo -e "${GREEN}✅ Test database created${NC}"
-    fi
-else
-    # In local, use docker exec
-    if $DOCKER_SUDO docker exec $DOCKER_IT postgres12 psql -U root -lqt | cut -d \| -f 1 | grep -qw simplebank_test; then
-        echo -e "${YELLOW}⚠️  Test database already exists${NC}"
-    else
-        $DOCKER_SUDO docker exec $DOCKER_IT postgres12 createdb --username=root --owner=root simplebank_test
-        echo -e "${GREEN}✅ Test database created${NC}"
-    fi
-fi
 
-# Step 5: Run test migrations
-echo -e "${YELLOW}⬆️  Step 5: Running test migrations...${NC}"
-migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simplebank_test?sslmode=disable" -verbose up
-echo -e "${GREEN}✅ Test migrations completed${NC}"
 
-# Step 6: List databases
+# Step 5: List databases
 echo -e "${BLUE}📋 Available databases:${NC}"
 if [ "$IN_CI" = true ]; then
     PGPASSWORD=secret psql -h localhost -U root -l
