@@ -38,7 +38,7 @@ sqlc:
 	sqlc generate
 
 test:
-	go test -v -cover ./db/sqlc
+	go test -v -cover ./...
 
 cleandb:
 	$(DOCKER_SUDO) docker exec $(DOCKER_IT) postgres12 psql -U root -d simplebank -c "TRUNCATE TABLE transfers, entries, accounts RESTART IDENTITY CASCADE;"
