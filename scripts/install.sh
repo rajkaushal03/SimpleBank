@@ -79,7 +79,6 @@ migrate -path db/migration -database "postgresql://root:secret@localhost:5432/si
 echo -e "${GREEN}✅ Production migrations completed${NC}"
 
 
-
 # Step 5: List databases
 echo -e "${BLUE}📋 Available databases:${NC}"
 if [ "$IN_CI" = true ]; then

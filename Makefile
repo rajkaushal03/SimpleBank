@@ -62,5 +62,8 @@ status:
 softclean:
 	./scripts/softclean.sh
 
+mock:
+	mockgen -package mockdb -destination db/mock/store.go SimpleBank/db/sqlc Store
+
 .PHONY: postgres createdb dropdb checkdb migrateup migratedown sqlc test cleandb \
-		listdb install cleanup reset status softclean server
+		listdb install cleanup reset status softclean server mockdb

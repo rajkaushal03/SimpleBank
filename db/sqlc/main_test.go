@@ -25,22 +25,7 @@ func TestMain(m *testing.M) {
 		log.Fatal("cannot open db connection:", err)
 	}
 
-	err = testDB.Ping()
-	if err != nil {
-		log.Fatal("cannot ping db:", err)
-	}
-
-	log.Println("✅ Test database connection successful!")
-
 	testQueries = New(testDB)
 
-	// Clean test database before tests
-	// cleanupDatabase()
-
-	code := m.Run()
-
-	// Clean test database after tests
-
-	testDB.Close()
-	os.Exit(code)
+	os.Exit(m.Run())
 }
