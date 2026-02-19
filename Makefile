@@ -34,6 +34,18 @@ migrateup:
 migratedown:
 	$(MIGRATE_DOWN)
 
+migrateversiondown:
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simplebank?sslmode=disable" -verbose down 1
+
+checkmigrateversion:
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simplebank?sslmode=disable" -verbose version
+
+migrateup1:
+	$(MIGRATE_UP) 1
+
+migratedown1:
+	$(MIGRATE_DOWN) 1
+
 sqlc:
 	sqlc generate
 
@@ -66,4 +78,5 @@ mock:
 	mockgen -package mockdb -destination db/mock/store.go SimpleBank/db/sqlc Store
 
 .PHONY: postgres createdb dropdb checkdb migrateup migratedown sqlc test cleandb \
-		listdb install cleanup reset status softclean server mockdb
+		listdb install cleanup reset status softclean server mockdb migratedown1 migrateup1 \
+		migrateversiondown checkmigrateversion
