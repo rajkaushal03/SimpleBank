@@ -44,7 +44,7 @@ cleandb:
 	$(DOCKER_SUDO) docker exec $(DOCKER_IT) postgres12 psql -U root -d simplebank -c "TRUNCATE TABLE transfers, entries, accounts RESTART IDENTITY CASCADE;"
 
 server:
-	go run main.go
+	air
 
 # Script-based commands (NEW)
 install:

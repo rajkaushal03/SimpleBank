@@ -1,6 +1,7 @@
 package db
 
 import (
+	"SimpleBank/util"
 	"context"
 	"testing"
 	"time"
@@ -101,9 +102,9 @@ func TestListAccounts(t *testing.T) {
 // Helper function to create random account for testing
 func createRandomAccount(t *testing.T) Account {
 	arg := CreateAccountParams{
-		Owner:    "tom",
-		Balance:  100,
-		Currency: "USD",
+		Owner:    util.RandomOwner(),
+		Balance:  util.RandomMoney(),
+		Currency: util.RandomCurrency(),
 	}
 
 	account, err := testQueries.CreateAccount(context.Background(), arg)
