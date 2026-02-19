@@ -11,3 +11,7 @@ read committed		    No		    Yes			    Yes
 repeatable read 	    No		    No			    Yes
 
 searizable		        No		    No			    No
+
+
+-- when adding new update to database add new migrate file version:
+migrate create -ext sql -dir db/migration -seq add_users
