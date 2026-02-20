@@ -33,9 +33,12 @@ func TestGetUser(t *testing.T) {
 
 // Helper function to create random account for testing
 func createRandomUser(t *testing.T) User {
+	hashedPassword, err := util.HashedPassword(util.RandomString(6))
+	require.NoError(t, err)
+
 	arg := CreateUserParams{
 		Username:       util.RandomOwner(),
-		HashedPassword: "secret",
+		HashedPassword: hashedPassword,
 		FullName:       util.RandomOwner(),
 		Email:          util.RandomEmail(),
 	}
