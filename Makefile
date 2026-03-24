@@ -11,8 +11,10 @@ endif
 MIGRATE_UP := migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simplebank?sslmode=disable" -verbose up
 MIGRATE_DOWN := migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simplebank?sslmode=disable" -verbose down
 
+# Docker Compose container name
+COMPOSE_POSTGRES := simplebank_postgres_1
 
-# production Database
+# Production Database (standalone)
 postgres:
 	$(DOCKER_SUDO) docker run --name postgres12 --network bank-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
 
@@ -27,6 +29,34 @@ checkdb:
 
 listdb:
 	$(DOCKER_SUDO) docker exec $(DOCKER_IT) postgres12 psql -U root -l
+
+# Docker Compose targets (NEW)
+dc-up:
+	docker-compose up -d
+
+dc-down:
+	docker-compose down
+
+dc-build:
+	docker-compose build --no-cache
+
+dc-logs:
+	docker-compose logs -f
+
+dc-checkdb:
+	$(DOCKER_SUDO) docker exec $(DOCKER_IT) $(COMPOSE_POSTGRES) psql -U root -d simplebank
+
+dc-listdb:
+	$(DOCKER_SUDO) docker exec $(DOCKER_IT) $(COMPOSE_POSTGRES) psql -U root -l
+
+dc-createdb:
+	$(DOCKER_SUDO) docker exec $(DOCKER_IT) $(COMPOSE_POSTGRES) createdb --username=root --owner=root simplebank
+
+dc-dropdb:
+	$(DOCKER_SUDO) docker exec $(DOCKER_IT) $(COMPOSE_POSTGRES) dropdb simplebank
+
+dc-cleandb:
+	$(DOCKER_SUDO) docker exec $(DOCKER_IT) $(COMPOSE_POSTGRES) psql -U root -d simplebank -c "TRUNCATE TABLE transfers, entries, accounts, users RESTART IDENTITY CASCADE;"
 
 migrateup:
 	$(MIGRATE_UP)
@@ -58,7 +88,7 @@ cleandb:
 server:
 	air
 
-# Script-based commands (NEW)
+# Script-based commands
 install:
 	./scripts/install.sh
 
@@ -78,5 +108,6 @@ mock:
 	mockgen -package mockdb -destination db/mock/store.go SimpleBank/db/sqlc Store
 
 .PHONY: postgres createdb dropdb checkdb migrateup migratedown sqlc test cleandb \
-		listdb install cleanup reset status softclean server mockdb migratedown1 migrateup1 \
-		migrateversiondown checkmigrateversion
+		listdb install cleanup reset status softclean server mock migratedown1 migrateup1 \
+		migrateversiondown checkmigrateversion dc-up dc-down dc-build dc-logs dc-checkdb \
+		dc-listdb dc-createdb dc-dropdb dc-cleandb
